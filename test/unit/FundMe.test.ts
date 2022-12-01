@@ -7,7 +7,6 @@ network.config.chainId !== 31337
     ? describe.skip
     : describe("FundMe", function () {
           let fundMe: FundMe;
-          let mockV3Aggregator: MockV3Aggregator;
           let deployer: SignerWithAddress;
           let player1: SignerWithAddress;
           const VAL = ethers.utils.parseEther(".025");
@@ -18,18 +17,13 @@ network.config.chainId !== 31337
               player1 = accounts[1];
               await deployments.fixture(["all"]);
               fundMe = await ethers.getContract("FundMe", deployer);
-              mockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
               fundMe = await fundMe.connect(deployer);
           });
 
           describe("constructor", function () {
-              it("sets the aggregator addresses correctly", async function () {
-                  const txResponse = await fundMe.getPriceFeed();
-                  assert.equal(txResponse, mockV3Aggregator.address);
-              });
 
-              it("sets the minUsd correctly", async function () {
-                  const txResponse = await fundMe.getMinUsd();
+              it("sets the minFundAmt correctly", async function () {
+                  const txResponse = await fundMe.getMinFundAmt();
                   assert.equal(txResponse.toString(), "50");
               });
           });
@@ -37,7 +31,7 @@ network.config.chainId !== 31337
           describe("fund", function () {
               it("reverts if too little ETH sent", async function () {
                   await expect(
-                      fundMe.fund({ value: ethers.utils.parseEther(".02499999999") })
+                      fundMe.fund({ value: "49" })
                   ).to.be.revertedWithCustomError(fundMe, "FundMe__NotEnoughEth");
               });
 
@@ -89,7 +83,7 @@ network.config.chainId !== 31337
                   await expect(
                       deployer.sendTransaction({
                           to: fundMe.address,
-                          value: ethers.utils.parseEther(".02499999999"),
+                          value: "49",
                           gasLimit: 5000000,
                       })
                   ).to.be.revertedWithCustomError(fundMe, "FundMe__NotEnoughEth");
@@ -120,7 +114,7 @@ network.config.chainId !== 31337
                   await expect(
                       deployer.sendTransaction({
                           to: fundMe.address,
-                          value: ethers.utils.parseEther(".02499999999"),
+                          value: "49",
                           data: "0x1234",
                           gasLimit: 5000000,
                       })

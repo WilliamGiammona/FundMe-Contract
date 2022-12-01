@@ -3,8 +3,6 @@ pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./PriceConverter.sol";
-import "hardhat/console.sol";
 
 error FundMe__NotEnoughEth();
 error FundMe__ProblemWithWithdrawal();
@@ -12,26 +10,20 @@ error FundMe__ProblemWithWithdrawal();
 /**
  * @title A contract for crowd funding.
  * @author William Giammona.
- * @dev This contract implements price feeds as our library.
  */
 
 contract FundMe is Ownable {
-    using PriceConverter for uint256;
 
     mapping(address => uint256) private s_addressToAmountFunded;
     address[] private s_funders;
-    AggregatorV3Interface private immutable i_priceFeed;
-    uint256 private immutable i_minimumUsd;
+    uint256 private immutable i_minFundAmt;
 
     /**
-     * @param priceFeed - The chain specific Aggregator Contract.
-     * @param minUsd - The minimum USD amount needed to fund the contract (it can be set to 0).
-     * @dev minUsd is multiplied by 10**18 to set it in terms of ETH instead of WEI.
+     * @param minFundAmt - The minimum amount in Wei needed to fund the contract (it can be set to 0).
      */
 
-    constructor(address priceFeed, uint256 minUsd) {
-        i_priceFeed = AggregatorV3Interface(priceFeed);
-        i_minimumUsd = minUsd * 10**18;
+    constructor( uint256 minFundAmt) {
+        i_minFundAmt = minFundAmt;
     }
 
     /**
@@ -46,11 +38,11 @@ contract FundMe is Ownable {
     }
 
     /**
-     * @notice Funds this contract. Reverts if ETH amount < ETH equivalent of i_minimumUsd.
+     * @notice Funds this contract. Reverts if ETH amount < ETH equivalent of i_minFundAmt.
      */
 
     function fund() public payable {
-        if (msg.value.getConversionRate(i_priceFeed) < i_minimumUsd) {
+        if (msg.value< i_minFundAmt) {
             revert FundMe__NotEnoughEth();
         }
         address[] memory funders = s_funders;
@@ -99,15 +91,12 @@ contract FundMe is Ownable {
     /**
      * @return i_priceFeed Returns the Aggregator address.
      */
-    function getPriceFeed() public view returns (AggregatorV3Interface) {
-        return i_priceFeed;
-    }
+    
 
     /**
-     * @return i_minimumUsd Returns the min amt of USD needed to fund this contract.
-     * @dev Please note, it's divided by 10**18 to eliminate the 18 zeros added in the constructor.
+     * @return i_minFundAmt Returns the min amt of Wei needed to fund the contract.
      */
-    function getMinUsd() public view returns (uint256) {
-        return (i_minimumUsd / 10**18);
+    function getMinFundAmt() public view returns (uint256) {
+        return (i_minFundAmt);
     }
 }

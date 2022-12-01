@@ -1,4 +1,4 @@
-# FundMe-Contract-With-Price-Conversion
+# FundMe-Contract
 
 - [What is it for?](#what-is-it-for)
 - [Getting Started](#getting-started)
@@ -9,7 +9,7 @@
 
 # What is it for?
 
-This project implements a smart contract on an EVM compatible blockchain for crowdfunding. The owner of the contract can set the minimum funding amount in dollars (It's converted to ETH using the PriceConverter.sol file and gets the current ETH to USD price using the price feed contract provided by chainlink), see who has funded the contract, how much was funded, and is the only one who can withdraw the funds to an address of his/her choice.
+This project implements a smart contract on an EVM compatible blockchain for crowdfunding. The owner of the contract can set the minimum funding amount in Wei, see who has funded the contract, how much was funded, and is the only one who can withdraw the funds to an address of his/her choice.
 
 # Getting Started
 
@@ -49,7 +49,7 @@ The main folders are:
 
 To deploy the Smart Contract, you'll first need to make sure your default network is correctly set. Go to the hardhat.config.ts file and add the network you want to deploy to ("mainnet" if you want to upload it to the ethereum mainnet) To add an additional network, you must add it in the networks object, and add the appropriate RPC URL in your .env file.
 
-Inside the deploy folder in the 01-deploy-funeMe.ts, the args variable contains the arguments for the FundMe contract. The fundMe contract's second argument is the minimum dollar amount you want the funder to send, and is set to 50 by default, but can be changed to fit your projects specific needs.
+Inside the deploy folder in the 01-deploy-funeMe.ts, the args variable contains the arguments for the FundMe contract. The fundMe contract's second argument is the minimum Wi amount you want the funder to send, and is set to 50 by default, but can be changed to fit your projects specific needs.
 
 Finally, go to the terminal and type:
 
