@@ -87,12 +87,7 @@ contract FundMe is Ownable {
     function getFunders(uint256 index) public view returns (address) {
         return s_funders[index];
     }
-
-    /**
-     * @return i_priceFeed Returns the Aggregator address.
-     */
     
-
     /**
      * @return i_minFundAmt Returns the min amt of Wei needed to fund the contract.
      */
