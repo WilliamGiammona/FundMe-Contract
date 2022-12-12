@@ -19,38 +19,37 @@ const deployFrontEnd = async function () {
 
 async function updateContractAddresses() {
   const chainId = network.config.chainId!.toString();
-  const Raffle = await ethers.getContract("Raffle");
+  const FundMe = await ethers.getContract("FundMe");
   const contractAddresses = JSON.parse(
     fs.readFileSync(FRONT_END_ADDRESSES_FILE, "utf-8")
   );
   if (chainId! in contractAddresses) {
-    if (!contractAddresses[chainId].includes(Raffle.address)) {
-      contractAddresses[chainId].push(Raffle.address);
+    if (!contractAddresses[chainId].includes(FundMe.address)) {
+      contractAddresses[chainId].push(FundMe.address);
     }
   } else {
-    contractAddresses[chainId] = [Raffle.address];
+    contractAddresses[chainId] = [FundMe.address];
   }
 
   fs.writeFileSync(FRONT_END_ADDRESSES_FILE, JSON.stringify(contractAddresses));
 }
 
 async function updateABI() {
-  const Raffle = await ethers.getContract("Raffle");
-  const contractName = "Raffle";
-  console.log(contractName);
+  const FundMe = await ethers.getContract("FundMe");
+  const contractName = "FundMe";
   const contractAbis = JSON.parse(fs.readFileSync(FRONT_END_ABI_FILE, "utf-8"));
   if (contractName in contractAbis) {
     if (
       !contractAbis[contractName].includes(
-        Raffle.interface.format(ethers.utils.FormatTypes.json)
+        FundMe.interface.format(ethers.utils.FormatTypes.json)
       )
     ) {
       contractAbis[contractName].push(
-        Raffle.interface.format(ethers.utils.FormatTypes.json)
+        FundMe.interface.format(ethers.utils.FormatTypes.json)
       );
     }
   } else {
-    contractAbis[contractName] = Raffle.interface.format(
+    contractAbis[contractName] = FundMe.interface.format(
       ethers.utils.FormatTypes.json
     );
   }
